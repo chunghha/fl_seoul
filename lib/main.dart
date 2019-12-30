@@ -98,30 +98,33 @@ class _CirclePageState extends State<CirclePage> {
           Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
-              RaisedButton(
-                  color: '#2e3440'.toColor().withOpacity(0.75),
-                  elevation: 16.0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(24.0),
-                  ),
-                  onPressed: () {},
-                  child: Slider(
-                    activeColor: '#88c0d0'.toColor(),
-                    inactiveColor: '#d8dee9'.toColor(),
-                    min: 5.0,
-                    max: 19.0,
-                    divisions: 14,
-                    label: zoomSlider.value.toString(),
-                    onChanged: (sliderValue) {
-                      setState(() {
-                        zoomSlider.newvalue(sliderValue);
-                        _mapController.move(_center, zoomSlider.value);
-                      });
-                    },
-                    value: zoomSlider.value,
-                  )),
+              Padding(
+                padding: EdgeInsets.all(8.0),
+                child: RaisedButton(
+                    color: '#2e3440'.toColor().withOpacity(0.75),
+                    elevation: 16.0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: new BorderRadius.circular(24.0),
+                    ),
+                    onPressed: () {},
+                    child: Slider(
+                      activeColor: '#88c0d0'.toColor(),
+                      inactiveColor: '#d8dee9'.toColor(),
+                      min: 5.0,
+                      max: 19.0,
+                      divisions: 14,
+                      label: zoomSlider.value.toString(),
+                      onChanged: (sliderValue) {
+                        setState(() {
+                          zoomSlider.newvalue(sliderValue);
+                          _mapController.move(_center, zoomSlider.value);
+                        });
+                      },
+                      value: zoomSlider.value,
+                    )),
+              )
             ],
-          )
+          ),
         ]),
       ),
     );
