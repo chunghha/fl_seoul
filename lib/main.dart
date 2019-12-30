@@ -4,6 +4,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:latlong/latlong.dart';
+import 'package:overlay_support/overlay_support.dart';
 import 'package:provider/provider.dart';
 import 'package:supercharged/supercharged.dart';
 
@@ -17,14 +18,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Provider<ZoomSlider>(
         create: (_) => ZoomSlider(),
-        child: MaterialApp(
-            debugShowCheckedModeBanner: false,
-            title: 'Flutter Map Demo',
-            home: Consumer<ZoomSlider>(
-              builder: (context, zoomSLider, _) {
-                return CirclePage();
-              },
-            )));
+        child: OverlaySupport(
+            child: MaterialApp(
+                debugShowCheckedModeBanner: false,
+                title: 'Flutter Map Demo',
+                home: Consumer<ZoomSlider>(
+                  builder: (context, zoomSLider, _) {
+                    return CirclePage();
+                  },
+                ))));
   }
 }
 
@@ -118,6 +120,20 @@ class _CirclePageState extends State<CirclePage> {
                         setState(() {
                           zoomSlider.newvalue(sliderValue);
                           _mapController.move(_center, zoomSlider.value);
+                          showSimpleNotification(
+                              Text('Zoom Level set to $sliderValue',
+                                  style: GoogleFonts.poppins(
+                                      textStyle: TextStyle(
+                                          fontSize: 18.0,
+                                          fontWeight: FontWeight.w500))),
+                              leading: Icon(
+                                Icons.info_outline,
+                                size: 32.0,
+                              ),
+                              background: '#a3be8c'.toColor(),
+                              foreground: '#2e3440'.toColor(),
+                              contentPadding:
+                                  EdgeInsets.fromLTRB(32.0, 4.0, 4.0, 8.0));
                         });
                       },
                       value: zoomSlider.value,

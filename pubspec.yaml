@@ -28,6 +28,7 @@ dependencies:
   google_fonts: ^0.2.0
   latlong: ^0.6.1
   mobx: ^0.4.0+1
+  overlay_support: ^1.0.2
   provider: ^4.0.1
   supercharged: ^1.1.0
 
