@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:supercharged/supercharged.dart';
 
-class SeoulWidget extends StatelessWidget {
+class LotteWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -17,12 +17,12 @@ class SeoulWidget extends StatelessWidget {
                 children: <Widget>[
                   CachedNetworkImage(
                     imageUrl:
-                        'https://images.adsttc.com/media/images/52aa/607b/e8e4/4ee8/8f00/0048/slideshow/cityhallct107.jpg',
+                        'https://www.globalcovenantofmayors.org/wp-content/uploads/2019/02/lotte-world-tower-1791802_1280.jpg',
                     placeholder: (context, url) => CircularProgressIndicator(),
                     errorWidget: (context, url, error) => Icon(Icons.error),
                   ),
                   SizedBox(height: 4.0),
-                  Text('Seoul City Hall',
+                  Text('Lotte Tower',
                       style: GoogleFonts.poppins(
                           fontSize: 24.0,
                           fontWeight: FontWeight.w500,
@@ -33,11 +33,9 @@ class SeoulWidget extends StatelessWidget {
                   Container(
                       padding: EdgeInsets.fromLTRB(8.0, 6.0, 8.0, 2.0),
                       child: Text(
-                          '  Seoul, the capital of South Korea, is a huge metropolis where modern skyscrapers, ' +
-                              'high-tech subways and pop culture meet Buddhist temples, palaces and street markets. ' +
-                              'Notable attractions include futuristic Dongdaemun Design Plaza, a convention hall with ' +
-                              'curving architecture and a rooftop park; Gyeongbokgung Palace, which once had more than ' +
-                              '7,000 rooms; and Jogyesa Temple, site of ancient locust and pine trees.',
+                          '  Lotte World Tower is a 123-floor, 555-metre supertall skyscraper located in Seoul, ' +
+                              'South Korea. It opened to the public on April 11, 2017 and is currently the tallest ' +
+                              'building in South Korea, and is the 6th tallest building in the world',
                           style: GoogleFonts.gelasio(
                               fontSize: 16.0,
                               fontWeight: FontWeight.w400,

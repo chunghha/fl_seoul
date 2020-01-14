@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -12,6 +13,8 @@ import 'package:supercharged/supercharged.dart';
 
 import 'package:fl_seoul/store/zoom_slider.dart';
 import 'package:fl_seoul/util.dart';
+import 'package:fl_seoul/widgets/dongdaemoon_widget.dart';
+import 'package:fl_seoul/widgets/lotte_widget.dart';
 import 'package:fl_seoul/widgets/seoul_widget.dart';
 
 void main() async {
@@ -50,19 +53,29 @@ class CirclePage extends StatefulWidget {
   _CirclePageState createState() => _CirclePageState();
 }
 
-class _CirclePageState extends State<CirclePage> {
-  static final double _latitude = 37.5665;
-  static final double _longitude = 126.9780;
-
+class _CirclePageState extends State<CirclePage> with TickerProviderStateMixin {
+  int _tapIndex;
   MapController _mapController;
   LatLng _center;
+  CircleMarker _marker;
+  List<LatLng> locations = [
+    LatLng(37.5665, 126.9780), // Seoul City Hall
+    LatLng(37.511234, 127.098030), // Lotte Tower
+    LatLng(37.5704, 127.0078) // Dongdaemoon Market
+  ];
 
   @override
   void initState() {
     super.initState();
 
+    _tapIndex = 0;
     _mapController = MapController();
-    _center = LatLng(_latitude, _longitude);
+    _center = locations[_tapIndex];
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -70,16 +83,19 @@ class _CirclePageState extends State<CirclePage> {
     final ZoomSlider zoomSlider =
         Provider.of<ZoomSlider>(context, listen: false);
 
-    var circleMarkers = <CircleMarker>[
-      CircleMarker(
-          point: LatLng(_latitude, _longitude),
-          color: '#bf616a'.toColor().withOpacity(0.7),
-          borderColor: '#ebcb8b'.toColor(),
-          borderStrokeWidth: 3,
-          useRadiusInMeter: true,
-          radius: getRadius(zoomSlider.value) // 200 meters | 0.2 km
-          ),
-    ];
+    var _radius = getRadius(zoomSlider.value);
+
+    List<CircleMarker> circleMarkers = locations
+        .asMap()
+        .entries
+        .map((entry) => CircleMarker(
+            point: locations[entry.key],
+            color: '#bf616a'.toColor().withOpacity(0.7),
+            borderColor: '#ebcb8b'.toColor(),
+            borderStrokeWidth: 3,
+            useRadiusInMeter: true,
+            radius: _radius))
+        .toList();
 
     return Scaffold(
         appBar: AppBar(
@@ -91,12 +107,47 @@ class _CirclePageState extends State<CirclePage> {
                         color: '#eceff4'.toColor(),
                         fontWeight: FontWeight.w700)))),
         backgroundColor: '#2e3440'.toColor(),
+        bottomNavigationBar: CurvedNavigationBar(
+          animationDuration: Duration(milliseconds: 500),
+          backgroundColor: '#c8ced9'.toColor(),
+          buttonBackgroundColor: '#eceff4'.toColor(),
+          color: '#e5e9f0'.toColor().withOpacity(0.7),
+          items: <Widget>[
+            Icon(Icons.trip_origin, size: 30),
+            Icon(Icons.local_see, size: 30),
+            Icon(Icons.local_mall, size: 30),
+          ],
+          onTap: (index) {
+            LatLng location;
+            int markerIndex;
+            switch (index) {
+              case 0:
+              case 1:
+              case 2:
+                location = locations[index];
+                markerIndex = index;
+                _tapIndex = index;
+                break;
+              default:
+                location = locations[0];
+                markerIndex = 0;
+                _tapIndex = 0;
+                break;
+            }
+            setState(() {
+              _marker = circleMarkers[markerIndex];
+              _center = location;
+              _radius = getRadius(zoomSlider.value);
+              _animatedMapMove(_center, zoomSlider.value);
+            });
+          },
+        ),
         body: SlidingUpPanel(
-            borderRadius: BorderRadius.all(Radius.circular(16.0)),
-            color: '#2e3440'.toColor().withOpacity(0.35),
-            minHeight: 128.0,
-            maxHeight: 520.0,
-            panel: SeoulWidget(),
+            borderRadius: BorderRadius.all(Radius.circular(12.0)),
+            color: '#d8dee9'.toColor().withOpacity(0.35),
+            minHeight: 84.0,
+            maxHeight: 532.0,
+            panel: _getSlidingUpWidget(_tapIndex),
             body: Consumer<ZoomSlider>(builder: (context, zoomSLider, _) {
               return Padding(
                 padding: EdgeInsets.all(12.0),
@@ -114,7 +165,10 @@ class _CirclePageState extends State<CirclePage> {
                                       urlTemplate:
                                           'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
                                       subdomains: ['a', 'b', 'c']),
-                                  CircleLayerOptions(circles: circleMarkers)
+                                  CircleLayerOptions(
+                                      circles: _marker != null
+                                          ? <CircleMarker>[_marker]
+                                          : <CircleMarker>[circleMarkers[0]])
                                 ],
                                 mapController: _mapController,
                               ),
@@ -142,8 +196,8 @@ class _CirclePageState extends State<CirclePage> {
                               onChanged: (sliderValue) {
                                 setState(() {
                                   zoomSlider.newvalue(sliderValue);
-                                  _mapController.move(
-                                      _center, zoomSlider.value);
+                                  _radius = getRadius(zoomSlider.value);
+                                  _animatedMapMove(_center, zoomSlider.value);
                                   showSimpleNotification(
                                       Text('Zoom Level set to $sliderValue',
                                           style: GoogleFonts.poppins(
@@ -169,5 +223,48 @@ class _CirclePageState extends State<CirclePage> {
                 ]),
               );
             })));
+  }
+
+  void _animatedMapMove(LatLng destLocation, double destZoom) {
+    final _latTween = Tween<double>(
+        begin: _mapController.center.latitude, end: destLocation.latitude);
+    final _lngTween = Tween<double>(
+        begin: _mapController.center.longitude, end: destLocation.longitude);
+    final _zoomTween = Tween<double>(begin: _mapController.zoom, end: destZoom);
+
+    var controller = AnimationController(
+        duration: const Duration(milliseconds: 650), vsync: this);
+
+    Animation<double> animation =
+        CurvedAnimation(parent: controller, curve: Curves.fastOutSlowIn);
+
+    controller.addListener(() {
+      _mapController.move(
+          LatLng(_latTween.evaluate(animation), _lngTween.evaluate(animation)),
+          _zoomTween.evaluate(animation));
+    });
+
+    animation.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        controller.dispose();
+      } else if (status == AnimationStatus.dismissed) {
+        controller.dispose();
+      }
+    });
+
+    controller.forward();
+  }
+
+  StatelessWidget _getSlidingUpWidget(int index) {
+    switch (index) {
+      case 0:
+        return SeoulWidget();
+      case 1:
+        return LotteWidget();
+      case 2:
+        return DongdaemmonWidget();
+      default:
+        return SeoulWidget();
+    }
   }
 }

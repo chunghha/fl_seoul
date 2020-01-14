@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:supercharged/supercharged.dart';
 
-class SeoulWidget extends StatelessWidget {
+class DongdaemmonWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -17,12 +17,12 @@ class SeoulWidget extends StatelessWidget {
                 children: <Widget>[
                   CachedNetworkImage(
                     imageUrl:
-                        'https://images.adsttc.com/media/images/52aa/607b/e8e4/4ee8/8f00/0048/slideshow/cityhallct107.jpg',
+                        'https://st3.depositphotos.com/6193152/15484/v/600/depositphotos_154841576-stock-video-4k-timelapse-of-the-dongdaemun.jpg',
                     placeholder: (context, url) => CircularProgressIndicator(),
                     errorWidget: (context, url, error) => Icon(Icons.error),
                   ),
                   SizedBox(height: 4.0),
-                  Text('Seoul City Hall',
+                  Text('Dongdaemoon Plaza',
                       style: GoogleFonts.poppins(
                           fontSize: 24.0,
                           fontWeight: FontWeight.w500,
@@ -33,11 +33,9 @@ class SeoulWidget extends StatelessWidget {
                   Container(
                       padding: EdgeInsets.fromLTRB(8.0, 6.0, 8.0, 2.0),
                       child: Text(
-                          '  Seoul, the capital of South Korea, is a huge metropolis where modern skyscrapers, ' +
-                              'high-tech subways and pop culture meet Buddhist temples, palaces and street markets. ' +
-                              'Notable attractions include futuristic Dongdaemun Design Plaza, a convention hall with ' +
-                              'curving architecture and a rooftop park; Gyeongbokgung Palace, which once had more than ' +
-                              '7,000 rooms; and Jogyesa Temple, site of ancient locust and pine trees.',
+                          '  The Dongdaemun Design Plaza, also called the DDP, is a major urban development landmark in Seoul, ' +
+                              'South Korea designed by Zaha Hadid and Samoo, with a distinctively neofuturistic design characterized ' +
+                              'by the powerful, curving forms of elongated structures.',
                           style: GoogleFonts.gelasio(
                               fontSize: 16.0,
                               fontWeight: FontWeight.w400,
