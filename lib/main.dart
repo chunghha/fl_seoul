@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
@@ -11,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:supercharged/supercharged.dart';
 
+import 'package:fl_seoul/logger.dart';
 import 'package:fl_seoul/store/zoom_slider.dart';
 import 'package:fl_seoul/util.dart';
 import 'package:fl_seoul/widgets/dongdaemoon_widget.dart';
@@ -54,7 +56,7 @@ class CirclePage extends StatefulWidget {
 }
 
 class _CirclePageState extends State<CirclePage> with TickerProviderStateMixin {
-  int _tapIndex;
+  int _tabIndex;
   MapController _mapController;
   LatLng _center;
   CircleMarker _marker;
@@ -63,14 +65,16 @@ class _CirclePageState extends State<CirclePage> with TickerProviderStateMixin {
     LatLng(37.511234, 127.098030), // Lotte Tower
     LatLng(37.5704, 127.0078) // Dongdaemoon Market
   ];
+  PanelController _panelController;
 
   @override
   void initState() {
     super.initState();
 
-    _tapIndex = 0;
+    _tabIndex = 0;
     _mapController = MapController();
-    _center = locations[_tapIndex];
+    _center = locations[_tabIndex];
+    _panelController = PanelController();
   }
 
   @override
@@ -126,12 +130,12 @@ class _CirclePageState extends State<CirclePage> with TickerProviderStateMixin {
               case 2:
                 location = locations[index];
                 markerIndex = index;
-                _tapIndex = index;
+                _tabIndex = index;
                 break;
               default:
                 location = locations[0];
                 markerIndex = 0;
-                _tapIndex = 0;
+                _tabIndex = 0;
                 break;
             }
             setState(() {
@@ -139,90 +143,111 @@ class _CirclePageState extends State<CirclePage> with TickerProviderStateMixin {
               _center = location;
               _radius = getRadius(zoomSlider.value);
               _animatedMapMove(_center, zoomSlider.value);
+              Log.d('Tab Index is now $_tabIndex.');
             });
           },
         ),
-        body: SlidingUpPanel(
-            borderRadius: BorderRadius.all(Radius.circular(12.0)),
-            color: '#d8dee9'.toColor().withOpacity(0.35),
-            minHeight: 84.0,
-            maxHeight: 532.0,
-            panel: _getSlidingUpWidget(_tapIndex),
-            body: Consumer<ZoomSlider>(builder: (context, zoomSLider, _) {
-              return Padding(
-                padding: EdgeInsets.all(12.0),
-                child: Stack(children: <Widget>[
-                  Column(children: [
-                    Observer(
-                        builder: (_) => Flexible(
-                              child: FlutterMap(
-                                options: MapOptions(
-                                  center: _center,
-                                  zoom: zoomSlider.value,
+        body: GestureDetector(
+            onTap: () async {
+              setState(() {
+                _panelController.isPanelClosed()
+                    ? _panelController.open()
+                    : _panelController.close();
+              });
+              // wait for the panel state updated
+              await new Future.delayed(const Duration(seconds: 1));
+              _panelController.isPanelClosed()
+                  ? Log.d('Panel closed on the tap.')
+                  : Log.d('Panel opened on the tap.');
+            },
+            child: SlidingUpPanel(
+                controller: _panelController,
+                borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                color: '#d8dee9'.toColor().withOpacity(0.35),
+                minHeight: 84.0,
+                maxHeight: 532.0,
+                parallaxEnabled: true,
+                parallaxOffset: 0.7,
+                slideDirection: SlideDirection.UP,
+                panel: _getSlidingUpWidget(_tabIndex),
+                body: Consumer<ZoomSlider>(builder: (context, zoomSLider, _) {
+                  return Padding(
+                    padding: EdgeInsets.all(12.0),
+                    child: Stack(children: <Widget>[
+                      Column(children: [
+                        Observer(
+                            builder: (_) => Flexible(
+                                  child: FlutterMap(
+                                    options: MapOptions(
+                                      center: _center,
+                                      zoom: zoomSlider.value,
+                                    ),
+                                    layers: [
+                                      TileLayerOptions(
+                                          urlTemplate:
+                                              'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                                          subdomains: ['a', 'b', 'c']),
+                                      CircleLayerOptions(
+                                          circles: _marker != null
+                                              ? <CircleMarker>[_marker]
+                                              : <CircleMarker>[
+                                                  circleMarkers[0]
+                                                ])
+                                    ],
+                                    mapController: _mapController,
+                                  ),
+                                ))
+                      ]),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(8.0, 48.0, 8.0, 8.0),
+                            child: RaisedButton(
+                                color: '#5e81ac'.toColor().withOpacity(0.55),
+                                elevation: 16.0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(24.0),
                                 ),
-                                layers: [
-                                  TileLayerOptions(
-                                      urlTemplate:
-                                          'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                                      subdomains: ['a', 'b', 'c']),
-                                  CircleLayerOptions(
-                                      circles: _marker != null
-                                          ? <CircleMarker>[_marker]
-                                          : <CircleMarker>[circleMarkers[0]])
-                                ],
-                                mapController: _mapController,
-                              ),
-                            ))
-                  ]),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(8.0, 48.0, 8.0, 8.0),
-                        child: RaisedButton(
-                            color: '#5e81ac'.toColor().withOpacity(0.55),
-                            elevation: 16.0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(24.0),
-                            ),
-                            onPressed: () {},
-                            child: Slider(
-                              activeColor: '#88c0d0'.toColor(),
-                              inactiveColor: '#d8dee9'.toColor(),
-                              min: 5.0,
-                              max: 19.0,
-                              divisions: 14,
-                              label: zoomSlider.value.toString(),
-                              onChanged: (sliderValue) {
-                                setState(() {
-                                  zoomSlider.newvalue(sliderValue);
-                                  _radius = getRadius(zoomSlider.value);
-                                  _animatedMapMove(_center, zoomSlider.value);
-                                  showSimpleNotification(
-                                      Text('Zoom Level set to $sliderValue',
-                                          style: GoogleFonts.poppins(
-                                              textStyle: TextStyle(
-                                                  fontSize: 18.0,
-                                                  fontWeight:
-                                                      FontWeight.w500))),
-                                      leading: Icon(
-                                        Icons.info_outline,
-                                        size: 32.0,
-                                      ),
-                                      background: '#a3be8c'.toColor(),
-                                      foreground: '#2e3440'.toColor(),
-                                      contentPadding: EdgeInsets.fromLTRB(
-                                          32.0, 4.0, 4.0, 8.0));
-                                });
-                              },
-                              value: zoomSlider.value,
-                            )),
-                      )
-                    ],
-                  ),
-                ]),
-              );
-            })));
+                                onPressed: () {},
+                                child: Slider(
+                                  activeColor: '#88c0d0'.toColor(),
+                                  inactiveColor: '#d8dee9'.toColor(),
+                                  min: 5.0,
+                                  max: 19.0,
+                                  divisions: 14,
+                                  label: zoomSlider.value.toString(),
+                                  onChanged: (sliderValue) {
+                                    setState(() {
+                                      zoomSlider.newvalue(sliderValue);
+                                      _radius = getRadius(zoomSlider.value);
+                                      _animatedMapMove(
+                                          _center, zoomSlider.value);
+                                      showSimpleNotification(
+                                          Text('Zoom Level set to $sliderValue',
+                                              style: GoogleFonts.poppins(
+                                                  textStyle: TextStyle(
+                                                      fontSize: 18.0,
+                                                      fontWeight:
+                                                          FontWeight.w500))),
+                                          leading: Icon(
+                                            Icons.info_outline,
+                                            size: 32.0,
+                                          ),
+                                          background: '#a3be8c'.toColor(),
+                                          foreground: '#2e3440'.toColor(),
+                                          contentPadding: EdgeInsets.fromLTRB(
+                                              32.0, 4.0, 4.0, 8.0));
+                                    });
+                                  },
+                                  value: zoomSlider.value,
+                                )),
+                          )
+                        ],
+                      ),
+                    ]),
+                  );
+                }))));
   }
 
   void _animatedMapMove(LatLng destLocation, double destZoom) {
