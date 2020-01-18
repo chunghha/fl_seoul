@@ -44,7 +44,7 @@ class MyApp extends StatelessWidget {
             child: MaterialApp(
                 debugShowCheckedModeBanner: false,
                 title: 'Flutter Map Demo',
-                home: Consumer<ZoomSlider>(builder: (context, zoomSLider, _) {
+                home: Consumer<ZoomSlider>(builder: (context, zoomSlider, _) {
                   return CirclePage();
                 }))));
   }
