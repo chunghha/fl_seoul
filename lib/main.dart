@@ -150,13 +150,13 @@ class _CirclePageState extends State<CirclePage> with TickerProviderStateMixin {
         body: GestureDetector(
             onTap: () async {
               setState(() {
-                _panelController.isPanelClosed()
+                _panelController.isPanelClosed
                     ? _panelController.open()
                     : _panelController.close();
               });
               // wait for the panel state updated
               await new Future.delayed(const Duration(seconds: 1));
-              _panelController.isPanelClosed()
+              _panelController.isPanelClosed
                   ? Log.d('Panel closed on the tap.')
                   : Log.d('Panel opened on the tap.');
             },

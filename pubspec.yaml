@@ -26,15 +26,16 @@ dependencies:
   cached_network_image: ^2.0.0
   curved_navigation_bar: ^0.3.1
   flutter_map: ^0.8.2
-  flutter_mobx: ^0.3.6
+  flutter_mobx: ^0.3.6+2
   google_fonts: ^0.2.0
   latlong: ^0.6.1
-  logger: ^0.8.2
-  mobx: ^0.4.0+1
+  logger: ^0.8.3
+  mobx: ^0.4.0+4
   overlay_support: ^1.0.2
-  provider: ^4.0.1
-  shared_preferences: ^0.5.6
-  sliding_up_panel: ^0.3.6
+  path_provider: ^1.5.1
+  provider: ^4.0.2
+  shared_preferences: ^0.5.6+1
+  sliding_up_panel: ^1.0.0
   supercharged: ^1.1.0
 
 dev_dependencies:
@@ -42,8 +43,7 @@ dev_dependencies:
     sdk: flutter
 
   build_runner: ^1.7.2
-  hive_generator: ^0.7.0
-  mobx_codegen: ^0.4.0+1
+  mobx_codegen: ^0.4.2
 
 
 # For information on the generic Dart part of this file, see the
