@@ -35,8 +35,8 @@ class LotteWidget extends StatelessWidget {
                       child: Text(
                           '  Lotte World Tower is a 123-floor, 555-metre supertall skyscraper located in Seoul, ' +
                               'South Korea. It opened to the public on April 11, 2017 and is currently the tallest ' +
-                              'building in South Korea, and is the 6th tallest building in the world',
-                          style: GoogleFonts.gelasio(
+                              'building in South Korea, and is the 6th tallest building in the world.',
+                          style: GoogleFonts.googleSans(
                               fontSize: 16.0,
                               fontWeight: FontWeight.w400,
                               textStyle: TextStyle(
