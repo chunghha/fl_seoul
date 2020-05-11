@@ -36,7 +36,7 @@ class DongdaemmonWidget extends StatelessWidget {
                           '  The Dongdaemun Design Plaza, also called the DDP, is a major urban development landmark in Seoul, ' +
                               'South Korea designed by Zaha Hadid and Samoo, with a distinctively neofuturistic design characterized ' +
                               'by the powerful, curving forms of elongated structures.',
-                          style: GoogleFonts.googleSans(
+                          style: GoogleFonts.openSans(
                               fontSize: 16.0,
                               fontWeight: FontWeight.w400,
                               textStyle: TextStyle(

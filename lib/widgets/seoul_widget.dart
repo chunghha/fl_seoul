@@ -44,7 +44,7 @@ class SeoulWidget extends StatelessWidget {
                                       'Notable attractions include futuristic Dongdaemun Design Plaza, a convention hall with ' +
                                       'curving architecture and a rooftop park; Gyeongbokgung Palace, which once had more than ' +
                                       '7,000 rooms; and Jogyesa Temple, site of ancient locust and pine trees.',
-                                  style: GoogleFonts.googleSans(
+                                  style: GoogleFonts.openSans(
                                       fontSize: 16.0,
                                       fontWeight: FontWeight.w400,
                                       textStyle: TextStyle(
