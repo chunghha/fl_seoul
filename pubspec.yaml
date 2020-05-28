@@ -27,24 +27,24 @@ dependencies:
   curved_navigation_bar: ^0.3.2
   flutter_map: ^0.9.0
   flutter_mobx: ^1.1.0
-  golden_toolkit: ^0.3.2
+  golden_toolkit: ^0.4.0
   google_fonts: ^1.1.0
   latlong: ^0.6.1
   logger: ^0.9.1
-  mobx: ^1.1.1
-  overlay_support: ^1.0.3
-  path_provider: ^1.6.7
-  provider: ^4.1.1
-  shared_preferences: ^0.5.7+1
+  mobx: ^1.2.1
+  overlay_support: ^1.0.4
+  path_provider: ^1.6.9
+  provider: ^4.1.2
+  shared_preferences: ^0.5.7+3
   sliding_up_panel: ^1.0.2
-  supercharged: ^1.5.1
+  supercharged: ^1.6.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  build_runner: ^1.9.0
-  mobx_codegen: ^1.0.3
+  build_runner: ^1.10.0
+  mobx_codegen: ^1.1.0
 
 
 # For information on the generic Dart part of this file, see the
